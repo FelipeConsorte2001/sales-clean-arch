@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
+import { DatabaseModule } from './shared/infrastructure/database/database.module'
 import { EnvConfigModule } from './shared/infrastructure/env-config/env-config.module'
 import { UsersModule } from './users/infrastructure/users.module'
 
 @Module({
-  imports: [EnvConfigModule.forRoot(), UsersModule],
+  imports: [EnvConfigModule.forRoot(), UsersModule, DatabaseModule],
   controllers: [AppController],
   providers: [AppService],
 })
