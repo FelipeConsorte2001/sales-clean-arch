@@ -37,6 +37,9 @@ export default defineConfig([
       '@typescript-eslint/require-await': 'off',
       '@typescript-eslint/no-unsafe-member-access': 'off',
       '@typescript-eslint/no-unsafe-return': 'warn',
+      '@typescript-eslint/no-unsafe-call': 'warn',
+      '@typescript-eslint/no-require-imports': 'warn'
+
     }
   },
 ]);

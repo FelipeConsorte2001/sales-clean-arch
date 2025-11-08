@@ -12,7 +12,9 @@
     "outDir": "./dist",
     "baseUrl": "./",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": [
+        "./src/*"
+      ]
     },
     "incremental": true,
     "skipLibCheck": true,
@@ -21,6 +23,7 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
+    "moduleResolution": "node",
     "resolveJsonModule": true
   }
 }
