@@ -13,6 +13,6 @@ module.exports = {
   coverageDirectory: '../coverage',
   testEnvironment: 'node',
   transformIgnorePatterns: [
-    '/node_modules/(?!@my-esm-package|another-esm-lib)/',
+    '/node_modules/(?!(@faker-js/faker|@prisma/client))/',
   ],
 }
