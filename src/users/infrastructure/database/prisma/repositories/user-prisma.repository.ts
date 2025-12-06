@@ -9,7 +9,7 @@ import {
 import { UserModelMapper } from '../models/user-model.mapper'
 
 export class UserPrismaRepository implements UserRepository {
-  constructor(private prismaService: PrismaService) { }
+  constructor(private prismaService: PrismaService) {}
   sortableFields: string[] = ['name', 'createAt']
   async findByEmail(email: string): Promise<UserEntity> {
     try {
