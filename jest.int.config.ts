@@ -1,6 +1,7 @@
-const { pathsToModuleNameMapper } = require('ts-jest')
-const tsconfig = require('./tsconfig.json')
-module.exports = {
+import { pathsToModuleNameMapper } from 'ts-jest'
+import tsconfig = require('./tsconfig.json')
+
+const config = {
   moduleFileExtensions: ['js', 'json', 'ts'],
   moduleNameMapper: pathsToModuleNameMapper(tsconfig.compilerOptions.paths, {
     prefix: '<rootDir>/',
@@ -16,3 +17,4 @@ module.exports = {
     '/node_modules/(?!(@faker-js/faker|@prisma/client))/',
   ],
 }
+export default config

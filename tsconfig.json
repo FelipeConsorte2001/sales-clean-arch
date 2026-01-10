@@ -25,5 +25,13 @@
     "noFallthroughCasesInSwitch": false,
     "moduleResolution": "node",
     "resolveJsonModule": true
-  }
+  },
+  "exclude": [
+    "node_modules",
+    "dist",
+    "jest.config.ts",
+    "jest.int.config.ts",
+    "jest.e2e.config.ts",
+    "**/*.spec.ts"
+  ]
 }

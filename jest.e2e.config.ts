@@ -6,14 +6,9 @@ const config = {
   moduleNameMapper: pathsToModuleNameMapper(tsconfig.compilerOptions.paths, {
     prefix: '<rootDir>/',
   }),
-  testRegex: '.*\\..*spec\\.ts$',
+  testRegex: '.*\\..*e2e-spec\\.ts$',
   transform: {
-    '^.+\\.(t|j)s$': [
-      'ts-jest',
-      {
-        tsconfig: 'tsconfig.json',
-      },
-    ],
+    '^.+\\.(t|j)s$': 'ts-jest',
   },
   collectCoverageFrom: ['**/*.(t|j)s'],
   coverageDirectory: '../coverage',
@@ -22,5 +17,4 @@ const config = {
     '/node_modules/(?!(@faker-js/faker|@prisma/client))/',
   ],
 }
-
 export default config
