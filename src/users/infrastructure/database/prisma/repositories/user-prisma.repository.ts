@@ -1,3 +1,4 @@
+import { ConflictError } from '@/shared/domain/erros/conflict-error'
 import { NotFoundError } from '@/shared/domain/erros/not-found-error'
 import { PrismaService } from '@/shared/infrastructure/database/prisma/prisma.service'
 import { UserEntity } from '@/users/domain/entities/user.entity'
@@ -21,8 +22,11 @@ export class UserPrismaRepository implements UserRepository {
       throw new NotFoundError(`UserModel not found using email ${email}`)
     }
   }
-  emailExist(email: string): Promise<void> {
-    throw new Error('Method not implemented.')
+  async emailExist(email: string): Promise<void> {
+    const user = await this.prismaService.user.findUnique({
+      where: { email },
+    })
+    if (user) throw new ConflictError(`Email address already used`)
   }
   async search(props: SearchParams): Promise<SearchResults> {
     const sortable = this.sortableFields?.includes(props.sort) || false
@@ -65,8 +69,8 @@ export class UserPrismaRepository implements UserRepository {
       filter: props.filter,
     })
   }
-  insert(entities: UserEntity): Promise<void> {
-    throw new Error('Method not implemented.')
+  async insert(entities: UserEntity): Promise<void> {
+    await this.prismaService.user.create({ data: entities.toJSON() })
   }
   findById(id: string): Promise<UserEntity> {
     throw new Error('Method not implemented.')
@@ -77,7 +81,20 @@ export class UserPrismaRepository implements UserRepository {
   update(entity: UserEntity): Promise<void> {
     throw new Error('Method not implemented.')
   }
-  delete(id: string): Promise<void> {
-    throw new Error('Method not implemented.')
+  async delete(id: string): Promise<void> {
+    await this._get(id)
+    await this.prismaService.user.delete({
+      where: { id },
+    })
+  }
+  protected async _get(id: string): Promise<UserEntity> {
+    try {
+      const user = await this.prismaService.user.findUnique({
+        where: { id },
+      })
+      return UserModelMapper.toEntity(user)
+    } catch {
+      throw new NotFoundError(`UserModel not found using ID ${id}`)
+    }
   }
 }
