@@ -9,8 +9,8 @@ export type UserProps = {
   typeUser: number
   phone: string
   password: string
-  createdAt: Date
-  updatedAt: Date
+  createdAt?: Date
+  updatedAt?: Date
 }
 
 export class UserEntity extends Entity<UserProps> {
@@ -21,6 +21,7 @@ export class UserEntity extends Entity<UserProps> {
     UserEntity.validate(props)
     super(props, id)
     this.props.createdAt = this.props.createdAt ?? new Date()
+    this.props.updatedAt = this.props.updatedAt ?? new Date()
   }
 
   update(value: string): void {
