@@ -9,9 +9,8 @@ import { ListUserUseCase } from '../../list-users.usecase'
 const MockUserRepository = {
   search: jest.fn(),
 } as any as UserRepository
-const mockUserRepository: UserRepository = {
-  search: jest.fn(),
-} as any
+
+
 describe('ListUsersUseCase unit tests', () => {
   let repository: typeof MockUserRepository
   let sut: ListUserUseCase

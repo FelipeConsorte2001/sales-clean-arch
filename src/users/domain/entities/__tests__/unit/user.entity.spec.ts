@@ -14,7 +14,10 @@ describe('UserEntity unit tests', () => {
     expect(sut.props.name).toEqual(props.name)
     expect(sut.props.password).toEqual(props.password)
     expect(sut.props.email).toEqual(props.email)
+    expect(sut.props.phone).toEqual(props.phone)
     expect(sut.props.createdAt).toBeInstanceOf(Date)
+    expect(sut.props.updatedAt).toEqual(props.updatedAt)
+    expect(sut.props.typeUser).toEqual(props.typeUser)
   })
 
   it('getter of name field', () => {

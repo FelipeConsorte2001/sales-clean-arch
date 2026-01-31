@@ -72,8 +72,8 @@ export class UserPrismaRepository implements UserRepository {
   async insert(entities: UserEntity): Promise<void> {
     await this.prismaService.user.create({ data: entities.toJSON() })
   }
-  findById(id: string): Promise<UserEntity> {
-    throw new Error('Method not implemented.')
+  async findById(id: string): Promise<UserEntity> {
+    return await this._get(id)
   }
   findAll(): Promise<UserEntity[]> {
     throw new Error('Method not implemented.')
