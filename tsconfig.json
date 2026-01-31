@@ -26,12 +26,11 @@
     "moduleResolution": "node",
     "resolveJsonModule": true
   },
+  "include": [
+    "src/**/*.ts"
+  ],
   "exclude": [
     "node_modules",
-    "dist",
-    "jest.config.ts",
-    "jest.int.config.ts",
-    "jest.e2e.config.ts",
-    "**/*.spec.ts"
+    "dist"
   ]
 }

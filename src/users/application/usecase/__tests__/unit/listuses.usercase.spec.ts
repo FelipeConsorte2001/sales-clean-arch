@@ -10,7 +10,6 @@ const MockUserRepository = {
   search: jest.fn(),
 } as any as UserRepository
 
-
 describe('ListUsersUseCase unit tests', () => {
   let repository: typeof MockUserRepository
   let sut: ListUserUseCase

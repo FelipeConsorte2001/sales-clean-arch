@@ -8,4 +8,4 @@ import { UsersModule } from './users/infrastructure/users.module'
   controllers: [],
   providers: [],
 })
-export class AppModule { }
+export class AppModule {}
