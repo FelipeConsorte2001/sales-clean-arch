@@ -22,7 +22,7 @@ describe('Signup unit tests', () => {
 
   it('Should create a user', async () => {
     const spy = jest.spyOn(repository, 'insert').mockResolvedValue(undefined)
-    await jest.spyOn(repository, 'emailExist').mockResolvedValue(undefined)
+    jest.spyOn(repository, 'emailExist').mockResolvedValue(undefined)
     const props = UserDataBuilder({})
     const result = await sut.execute({
       name: props.name,
@@ -40,7 +40,7 @@ describe('Signup unit tests', () => {
   it('Should not be able to register with same email twice', async () => {
     const props = UserDataBuilder({ email: 'a@a.com' })
 
-    await jest
+    jest
       .spyOn(repository, 'emailExist')
       .mockRejectedValue(new ConflictError('Email address already used'))
     await expect(() => sut.execute(props)).rejects.toBeInstanceOf(ConflictError)

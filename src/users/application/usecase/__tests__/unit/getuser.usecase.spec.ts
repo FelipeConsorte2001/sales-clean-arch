@@ -24,7 +24,7 @@ describe('GetUserUsercase unit tests', () => {
   })
 
   it('Should throws error when entity not found', async () => {
-    await jest
+    jest
       .spyOn(repository, 'findById')
       .mockRejectedValue(new NotFoundError(`Entity not found`))
     await expect(() => sut.execute({ id: 'fake id' })).rejects.toThrow(
@@ -38,7 +38,7 @@ describe('GetUserUsercase unit tests', () => {
     repository.items = items
     const result = await sut.execute({ id: items[0]._id })
     expect(spy).toHaveBeenCalledTimes(1)
-    await jest.spyOn(repository, 'toJSON').mockResolvedValue(items[0])
+    jest.spyOn(repository, 'toJSON').mockResolvedValue(items[0])
     expect(result).toMatchObject({
       id: items[0].id,
       name: items[0].name,
