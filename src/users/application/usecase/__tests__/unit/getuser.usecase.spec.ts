@@ -1,14 +1,8 @@
 import { NotFoundError } from '@/shared/domain/erros/not-found-error'
 import { UserEntity } from '@/users/domain/entities/user.entity'
-import { UserRepository } from '@/users/domain/repositories/user.repository'
 import { UserDataBuilder } from '@/users/domain/testing/helpers/user-data-builder'
 import { GetUserUseCase } from '../../get-user.use.case'
 
-const MockUserRepository = {
-  execute: jest.fn(),
-  findById: jest.fn(),
-  items: [],
-} as any as UserRepository
 describe('GetUserUsercase unit tests', () => {
   let sut: GetUserUseCase
   let repository: any
