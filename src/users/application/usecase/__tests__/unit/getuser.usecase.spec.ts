@@ -1,7 +1,7 @@
 import { NotFoundError } from '@/shared/domain/erros/not-found-error'
 import { UserEntity } from '@/users/domain/entities/user.entity'
 import { UserDataBuilder } from '@/users/domain/testing/helpers/user-data-builder'
-import { GetUserUseCase } from '../../get-user.use.case'
+import { GetUserUseCase } from '../../get-user.usecase'
 
 describe('GetUserUsercase unit tests', () => {
   let sut: GetUserUseCase
