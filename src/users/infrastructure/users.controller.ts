@@ -8,6 +8,7 @@ import {
   Param,
   Patch,
   Post,
+  Put,
   Query,
 } from '@nestjs/common'
 
@@ -22,10 +23,12 @@ import {
 import { SigninUseCase } from '../application/usecase/sign-in.usecase'
 import { SignupUseCase } from '../application/usecase/sign-up.usecase'
 import { UpdatePasswordUseCase } from '../application/usecase/update-password.usecase'
+import { UpdateUserUseCase } from '../application/usecase/update-user.usecase'
 import { ListUsersDto } from './dtos/list-users.dto'
 import { SinginDto } from './dtos/signin.dto'
 import { SingupDto } from './dtos/signup.dto'
 import { UpdatePasswordDto } from './dtos/update-password.dto'
+import { UpdateUserDto } from './dtos/UpdateUser.dto'
 import {
   UserCollectionPresenter,
   UserPresenter,
@@ -51,6 +54,9 @@ export class UsersController {
 
   @Inject(DeleteUserUseCase)
   private deleteUserUseCase: DeleteUserUseCase
+
+  @Inject(UpdateUserUseCase)
+  private updateUserUseCase: UpdateUserUseCase
 
   static userToResponse(output: UserOutput) {
     return new UserPresenter(output)
@@ -184,5 +190,26 @@ export class UsersController {
   async login(@Body() singinDto: SinginDto) {
     const output = await this.signinUseCase.execute(singinDto)
     return output
+  }
+
+  @ApiResponse({
+    status: 422,
+    description: 'body has invalid data',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'id did not find',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'access unathorizathe',
+  })
+  @Put(':id')
+  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    const output = await this.updateUserUseCase.execute({
+      id,
+      ...updateUserDto,
+    })
+    return UsersController.userToResponse(output)
   }
 }

@@ -7,6 +7,7 @@ import { ListUserUseCase } from '../application/usecase/list-users.usecase'
 import { SigninUseCase } from '../application/usecase/sign-in.usecase'
 import { SignupUseCase } from '../application/usecase/sign-up.usecase'
 import { UpdatePasswordUseCase } from '../application/usecase/update-password.usecase'
+import { UpdateUserUseCase } from '../application/usecase/update-user.usecase'
 import { UserRepository } from '../domain/repositories/user.repository'
 import { UserPrismaRepository } from './database/prisma/repositories/user-prisma.repository'
 import { bcryptjsHashProvider } from './providers/bcryptjs-hash.provider'
@@ -75,6 +76,13 @@ import { UsersController } from './users.controller'
       provide: DeleteUserUseCase,
       useFactory: (userRepository: UserRepository) => {
         return new DeleteUserUseCase(userRepository)
+      },
+      inject: ['UserRepository'],
+    },
+    {
+      provide: UpdateUserUseCase,
+      useFactory: (userRepository: UserRepository) => {
+        return new UpdateUserUseCase(userRepository)
       },
       inject: ['UserRepository'],
     },
