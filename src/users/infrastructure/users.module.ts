@@ -1,6 +1,8 @@
 import { HashProvider } from '@/shared/application/provider/hash-provider'
 import { PrismaService } from '@/shared/infrastructure/database/prisma/prisma.service'
 import { Module } from '@nestjs/common'
+import { DeleteUserUseCase } from '../application/usecase/delete.usescase'
+import { GetUserUseCase } from '../application/usecase/get-user.usecase'
 import { ListUserUseCase } from '../application/usecase/list-users.usecase'
 import { SigninUseCase } from '../application/usecase/sign-in.usecase'
 import { SignupUseCase } from '../application/usecase/sign-up.usecase'
@@ -61,6 +63,20 @@ import { UsersController } from './users.controller'
         return new SigninUseCase(userRepository, hashProvider)
       },
       inject: ['UserRepository', 'HashProvider'],
+    },
+    {
+      provide: GetUserUseCase,
+      useFactory: (userRepository: UserRepository) => {
+        return new GetUserUseCase(userRepository)
+      },
+      inject: ['UserRepository'],
+    },
+    {
+      provide: DeleteUserUseCase,
+      useFactory: (userRepository: UserRepository) => {
+        return new DeleteUserUseCase(userRepository)
+      },
+      inject: ['UserRepository'],
     },
   ],
 })

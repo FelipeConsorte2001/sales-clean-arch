@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   Inject,
@@ -12,6 +13,8 @@ import {
 
 import { ApiResponse, ApiTags, getSchemaPath } from '@nestjs/swagger'
 import { UserOutput } from '../application/dtos/user-output'
+import { DeleteUserUseCase } from '../application/usecase/delete.usescase'
+import { GetUserUseCase } from '../application/usecase/get-user.usecase'
 import {
   ListUserUseCase,
   Output,
@@ -42,6 +45,13 @@ export class UsersController {
 
   @Inject(SigninUseCase)
   private signinUseCase: SigninUseCase
+
+  @Inject(GetUserUseCase)
+  private getUserUseCase: GetUserUseCase
+
+  @Inject(DeleteUserUseCase)
+  private deleteUserUseCase: DeleteUserUseCase
+
   static userToResponse(output: UserOutput) {
     return new UserPresenter(output)
   }
@@ -94,6 +104,37 @@ export class UsersController {
   }
 
   @ApiResponse({
+    status: 404,
+    description: 'id did not find',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'access unathorizathe',
+  })
+  @Get(':id')
+  async findOne(@Param('id') id: string) {
+    const output = await this.getUserUseCase.execute({ id })
+    return UsersController.userToResponse(output)
+  }
+  @ApiResponse({
+    status: 204,
+    description: 'exclusion confirmation response',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'id did not find',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'access unathorizathe',
+  })
+  @HttpCode(204)
+  @Delete(':id')
+  async remove(@Param('id') id: string) {
+    await this.deleteUserUseCase.execute({ id })
+  }
+
+  @ApiResponse({
     status: 422,
     description: 'body has invalid data',
   })
@@ -142,7 +183,6 @@ export class UsersController {
   @Post('login')
   async login(@Body() singinDto: SinginDto) {
     const output = await this.signinUseCase.execute(singinDto)
-    console.log(output, '*****************')
     return output
   }
 }
