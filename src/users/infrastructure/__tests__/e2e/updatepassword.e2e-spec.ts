@@ -141,5 +141,15 @@ describe('UsersController e2e tests', () => {
           message: 'Old password does not match',
         })
     })
+    it('should return a error with 401 code when user is unauthorized', async () => {
+      await request(app.getHttpServer())
+        .patch(`/users/${entity._id}`)
+        .send(updatePasswordDto)
+        .expect(401)
+        .expect({
+          statusCode: 401,
+          message: 'Unauthorized',
+        })
+    })
   })
 })
