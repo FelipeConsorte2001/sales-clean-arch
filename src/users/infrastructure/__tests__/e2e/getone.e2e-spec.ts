@@ -1,48 +1,86 @@
-import { NotFoundError } from '@/shared/domain/erros/not-found-error'
+import { applyGlobalConfig } from '@/global-config'
+import { HashProvider } from '@/shared/application/provider/hash-provider'
 import { DatabaseModule } from '@/shared/infrastructure/database/database.module'
 import { setupPrismaTests } from '@/shared/infrastructure/database/prisma/testing/setup-prisma/setup-prisma-tests'
-import { GetUserUseCase } from '@/users/application/usecase/get-user.usecase'
+import { EnvConfigModule } from '@/shared/infrastructure/env-config/env-config.module'
 import { UserEntity } from '@/users/domain/entities/user.entity'
+import { UserRepository } from '@/users/domain/repositories/user.repository'
 import { UserDataBuilder } from '@/users/domain/testing/helpers/user-data-builder'
-import { UserPrismaRepository } from '@/users/infrastructure/database/prisma/repositories/user-prisma.repository'
+import { INestApplication } from '@nestjs/common'
 import { Test, TestingModule } from '@nestjs/testing'
 import { PrismaClient } from '@prisma/client'
+import { instanceToPlain } from 'class-transformer'
+import request from 'supertest'
+import { bcryptjsHashProvider } from '../../providers/bcryptjs-hash.provider'
+import { UsersController } from '../../users.controller'
+import { UsersModule } from '../../users.module'
 
-describe('GetUserUseCase integration tests', () => {
-  const prismaService = new PrismaClient()
-  let sut: GetUserUseCase
-  let repository: UserPrismaRepository
-
+describe('UsersController e2e tests', () => {
+  let app: INestApplication
   let module: TestingModule
-
+  let repository: UserRepository
+  const prismaService = new PrismaClient()
+  let entity: UserEntity
+  let hashProvider: HashProvider
+  let hashPassword: string
+  let accessToken: string
   beforeAll(async () => {
     setupPrismaTests()
     module = await Test.createTestingModule({
-      imports: [DatabaseModule.forTests(prismaService)],
+      imports: [
+        EnvConfigModule,
+        UsersModule,
+        DatabaseModule.forTests(prismaService),
+      ],
     }).compile()
-    repository = new UserPrismaRepository(prismaService as any)
+    app = module.createNestApplication()
+    applyGlobalConfig(app)
+    await app.init()
+    repository = module.get<UserRepository>('UserRepository')
+    hashProvider = new bcryptjsHashProvider()
+    hashPassword = await hashProvider.generateHash('1234')
   })
 
   beforeEach(async () => {
-    sut = new GetUserUseCase(repository)
     await prismaService.user.deleteMany()
-  })
-
-  afterAll(async () => {
-    await module.close()
-  })
-  it('should show throws error when entity notFound', async () => {
-    const id = 'id'
-    await expect(() => sut.execute({ id })).rejects.toThrow(
-      new NotFoundError(`UserModel not found using ID ${id}`),
+    entity = new UserEntity(
+      UserDataBuilder({ email: 'a@a.com', password: hashPassword }),
     )
+    await repository.insert(entity)
+    const loginResponse = await request(app.getHttpServer())
+      .post('/users/login')
+      .send({ email: 'a@a.com', password: '1234' })
+      .expect(200)
+    accessToken = loginResponse.body.accessToken
   })
 
-  it('should return a user', async () => {
-    const entity = new UserEntity(UserDataBuilder({}))
-    const model = await prismaService.user.create({ data: entity.toJSON() })
+  describe('GET /users/:id', () => {
+    it('should get a user by id', async () => {
+      const res = await request(app.getHttpServer())
+        .get(`/users/${entity._id}`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(200)
+      const presenter = UsersController.userToResponse(entity.toJSON())
+      const serialized = instanceToPlain(presenter)
+      expect(res.body.data).toStrictEqual(serialized)
+    })
+    it('should return a error with 404 code when throw notFoundError with invalid id', async () => {
+      await request(app.getHttpServer())
+        .get(`/users/fake`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(404)
+        .expect({
+          statusCode: 404,
+          error: 'Not Found',
+          message: 'UserModel not found using ID fake',
+        })
+    })
 
-    const output = await sut.execute({ id: entity._id })
-    expect(output).toMatchObject(model)
+    it('should return a error with 401 code when user is unauthorized', async () => {
+      await request(app.getHttpServer()).get(`/users/fake`).expect(401).expect({
+        statusCode: 401,
+        message: 'Unauthorized',
+      })
+    })
   })
 })
