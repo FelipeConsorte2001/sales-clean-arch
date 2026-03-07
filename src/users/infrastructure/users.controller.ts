@@ -10,9 +10,17 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common'
 
-import { ApiResponse, ApiTags, getSchemaPath } from '@nestjs/swagger'
+import { AuthGuard } from '@/auth/infrastructure/auth.guard'
+import { AuthService } from '@/auth/infrastructure/auth.service'
+import {
+  ApiBearerAuth,
+  ApiResponse,
+  ApiTags,
+  getSchemaPath,
+} from '@nestjs/swagger'
 import { UserOutput } from '../application/dtos/user-output'
 import { DeleteUserUseCase } from '../application/usecase/delete.usescase'
 import { GetUserUseCase } from '../application/usecase/get-user.usecase'
@@ -58,6 +66,9 @@ export class UsersController {
   @Inject(UpdateUserUseCase)
   private updateUserUseCase: UpdateUserUseCase
 
+  @Inject(AuthService)
+  private authService: AuthService
+
   static userToResponse(output: UserOutput) {
     return new UserPresenter(output)
   }
@@ -65,7 +76,7 @@ export class UsersController {
   static listUsersToResponse(output: Output) {
     return new UserCollectionPresenter(output)
   }
-
+  @ApiBearerAuth()
   @ApiResponse({
     status: 200,
     schema: {
@@ -103,12 +114,14 @@ export class UsersController {
     status: 401,
     description: 'access unathorizathe',
   })
+  @UseGuards(AuthGuard)
+  @HttpCode(200)
   @Get()
   async search(@Query() searchParams: ListUsersDto) {
     const output = await this.listUsersUseCase.execute(searchParams)
     return UsersController.listUsersToResponse(output)
   }
-
+  @ApiBearerAuth()
   @ApiResponse({
     status: 404,
     description: 'id did not find',
@@ -117,11 +130,13 @@ export class UsersController {
     status: 401,
     description: 'access unathorizathe',
   })
+  @UseGuards(AuthGuard)
   @Get(':id')
   async findOne(@Param('id') id: string) {
     const output = await this.getUserUseCase.execute({ id })
     return UsersController.userToResponse(output)
   }
+  @ApiBearerAuth()
   @ApiResponse({
     status: 204,
     description: 'exclusion confirmation response',
@@ -135,11 +150,11 @@ export class UsersController {
     description: 'access unathorizathe',
   })
   @HttpCode(204)
+  @UseGuards(AuthGuard)
   @Delete(':id')
   async remove(@Param('id') id: string) {
     await this.deleteUserUseCase.execute({ id })
   }
-
   @ApiResponse({
     status: 422,
     description: 'body has invalid data',
@@ -162,6 +177,8 @@ export class UsersController {
     status: 404,
     description: 'id did not find',
   })
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
   @Patch(':id')
   async updatePassword(
     @Param('id') id: string,
@@ -173,6 +190,7 @@ export class UsersController {
     })
     return UsersController.userToResponse(output)
   }
+
   @ApiResponse({
     status: 422,
     description: 'body has invalid data',
@@ -189,9 +207,9 @@ export class UsersController {
   @Post('login')
   async login(@Body() singinDto: SinginDto) {
     const output = await this.signinUseCase.execute(singinDto)
-    return output
+    return this.authService.generateJwt(output.id)
   }
-
+  @ApiBearerAuth()
   @ApiResponse({
     status: 422,
     description: 'body has invalid data',
@@ -204,6 +222,8 @@ export class UsersController {
     status: 401,
     description: 'access unathorizathe',
   })
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
   @Put(':id')
   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     const output = await this.updateUserUseCase.execute({
