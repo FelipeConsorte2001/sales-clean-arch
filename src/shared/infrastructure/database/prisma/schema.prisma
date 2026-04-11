@@ -30,7 +30,7 @@ model User {
 
 model Category {
   id        String   @id @db.Uuid
-  name      String   @db.VarChar(255)
+  name      String   @unique @db.VarChar(255)
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
