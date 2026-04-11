@@ -12,11 +12,12 @@ export class SearchResults extends DefaultSearchResult<
 > {}
 export class SearchParams extends DefaultSearchParams<Filter> {}
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface CategoryRepository
   extends SearchableRepositoryInterface<
     CategoryEntity,
     Filter,
     SearchParams,
     SearchResults
-  > {}
+  > {
+  categoryExist(name: string): Promise<void>
+}

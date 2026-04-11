@@ -44,7 +44,17 @@ describe('UserPrismaRepository integration tests', () => {
     })
     expect(output).toBeNull()
   })
+  it('should insert a new entity', async () => {
+    const entity = new UserEntity(UserDataBuilder({}))
+    await sut.insert(entity)
+    const result = await prismaService.user.findUnique({
+      where: {
+        id: entity._id,
+      },
+    })
 
+    expect(result).toStrictEqual(entity.toJSON())
+  })
   it('should throws error when email not found', async () => {
     const email = 'email@email.com'
     await expect(() => sut.findByEmail(email)).rejects.toThrow(
