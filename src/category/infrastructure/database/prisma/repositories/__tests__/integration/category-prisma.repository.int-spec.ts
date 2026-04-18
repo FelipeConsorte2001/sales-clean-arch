@@ -1,6 +1,7 @@
 import { CategoryEntity } from '@/category/domain/entities/category.entity'
 import { CategoryDataBuilder } from '@/category/domain/testing/helpers/category-data-builder'
 import { ConflictError } from '@/shared/domain/erros/conflict-error'
+import { NotFoundError } from '@/shared/domain/erros/not-found-error'
 import { DatabaseModule } from '@/shared/infrastructure/database/database.module'
 import { setupPrismaTests } from '@/shared/infrastructure/database/prisma/testing/setup-prisma/setup-prisma-tests'
 import { Test } from '@nestjs/testing'
@@ -49,5 +50,20 @@ describe('CategoryPrismaRepository integration tests', () => {
   it('should not finds a entity by name', async () => {
     expect.assertions(0)
     await sut.categoryExist('aa'.toLocaleLowerCase())
+  })
+
+  it('should finds a entity by id', async () => {
+    const entity = new CategoryEntity(CategoryDataBuilder({}))
+    const newCategory = await prismaService.category.create({
+      data: entity.toJSON(),
+    })
+    const output = await sut.findById(newCategory.id)
+    expect(output.toJSON()).toStrictEqual(entity.toJSON())
+  })
+  it('should throws error when entity not found', async () => {
+    const fakeId = 'fakeId'
+    await expect(() => sut.findById(fakeId)).rejects.toThrow(
+      new NotFoundError(`UserModel not found using ID ${fakeId}`),
+    )
   })
 })
