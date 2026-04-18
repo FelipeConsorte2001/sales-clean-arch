@@ -12,12 +12,11 @@ export class SearchResults extends DefaultSearchResult<
 > {}
 export class SearchParams extends DefaultSearchParams<Filter> {}
 
-export interface CategoryRepository
-  extends SearchableRepositoryInterface<
-    CategoryEntity,
-    Filter,
-    SearchParams,
-    SearchResults
-  > {
+export interface CategoryRepository extends SearchableRepositoryInterface<
+  CategoryEntity,
+  Filter,
+  SearchParams,
+  SearchResults
+> {
   categoryExist(name: string): Promise<void>
 }

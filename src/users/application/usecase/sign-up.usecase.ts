@@ -13,9 +13,10 @@ export type SignupUpInput = {
   typeUser: number
 }
 export type Output = UserOutput
-export class SignupUseCase
-  implements DefaultUseCase<SignupUpInput, Promise<Output>>
-{
+export class SignupUseCase implements DefaultUseCase<
+  SignupUpInput,
+  Promise<Output>
+> {
   constructor(private userRepository: UserRepository) {}
   async execute(input: SignupUpInput): Promise<Output> {
     const { name, email, password, phone, cpf } = input

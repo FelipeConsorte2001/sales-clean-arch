@@ -7,8 +7,14 @@ import { EnvConfigModule } from './shared/infrastructure/env-config/env-config.m
 import { UsersModule } from './users/infrastructure/users.module'
 
 @Module({
-  imports: [EnvConfigModule.forRoot(), UsersModule, DatabaseModule, AuthModule, CategoryModule],
+  imports: [
+    EnvConfigModule.forRoot(),
+    UsersModule,
+    DatabaseModule,
+    AuthModule,
+    CategoryModule,
+  ],
   controllers: [],
   providers: [CategoryService],
 })
-export class AppModule { }
+export class AppModule {}

@@ -5,9 +5,10 @@ export type DeleteUserInput = {
   id: string
 }
 export type Output = void
-export class DeleteUserUseCase
-  implements DefaultUseCase<DeleteUserInput, Promise<Output>>
-{
+export class DeleteUserUseCase implements DefaultUseCase<
+  DeleteUserInput,
+  Promise<Output>
+> {
   constructor(private userRepository: UserRepository) {}
   async execute(input: DeleteUserInput): Promise<Output> {
     await this.userRepository.delete(input.id)

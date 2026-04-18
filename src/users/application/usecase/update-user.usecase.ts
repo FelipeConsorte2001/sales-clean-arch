@@ -8,9 +8,10 @@ export type UpdateUserInput = {
   id: string
 }
 export type Output = UserOutput
-export class UpdateUserUseCase
-  implements DefaultUseCase<UpdateUserInput, Promise<Output>>
-{
+export class UpdateUserUseCase implements DefaultUseCase<
+  UpdateUserInput,
+  Promise<Output>
+> {
   constructor(private userRepository: UserRepository) {}
   async execute(input: UpdateUserInput): Promise<Output> {
     if (!input.name) throw new BadRequestError('Name not provided')

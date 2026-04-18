@@ -1,9 +1,7 @@
 import { CategoryRepository } from '@/category/domain/repositories/category.repository'
 import { CategoryDataBuilder } from '@/category/domain/testing/helpers/category-data-builder'
 import { BadRequestError } from '@/shared/application/erros/bad-request-error'
-import { HashProvider } from '@/shared/application/provider/hash-provider'
 import { ConflictError } from '@/shared/domain/erros/conflict-error'
-import { bcryptjsHashProvider } from '@/users/infrastructure/providers/bcryptjs-hash.provider'
 import { CreateCategoryUseCase } from '../../create.usecase'
 
 const MockCategoryRepository = {
@@ -14,11 +12,9 @@ const MockCategoryRepository = {
 describe('Category unit tests', () => {
   let sut: CreateCategoryUseCase
   let repository: typeof MockCategoryRepository
-  let hashProvider: HashProvider
 
   beforeEach(() => {
     repository = MockCategoryRepository
-    hashProvider = new bcryptjsHashProvider()
     sut = new CreateCategoryUseCase(repository)
     jest.clearAllMocks()
   })

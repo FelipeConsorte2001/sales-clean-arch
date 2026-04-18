@@ -10,9 +10,10 @@ export type UpdatePasswordInput = {
   id: string
 }
 export type Output = UserOutput
-export class UpdatePasswordUseCase
-  implements DefaultUseCase<UpdatePasswordInput, Promise<Output>>
-{
+export class UpdatePasswordUseCase implements DefaultUseCase<
+  UpdatePasswordInput,
+  Promise<Output>
+> {
   constructor(
     private userRepository: UserRepository,
     private hashProvider: HashProvider,

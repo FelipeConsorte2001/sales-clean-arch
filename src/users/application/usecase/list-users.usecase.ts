@@ -13,9 +13,10 @@ import { UserOutput, UserOutputMapper } from '../dtos/user-output'
 
 export type ListUsersInput = SearchInput
 export type Output = PaginationOutput<UserOutput>
-export class ListUserUseCase
-  implements DefaultUseCase<ListUsersInput, Promise<Output>>
-{
+export class ListUserUseCase implements DefaultUseCase<
+  ListUsersInput,
+  Promise<Output>
+> {
   constructor(private userRepository: UserRepository) {}
   async execute(input: ListUsersInput): Promise<Output> {
     const params = new SearchParams(input)

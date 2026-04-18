@@ -9,9 +9,10 @@ export type CreateCategoryInput = {
 }
 export type Output = CategoryOutput
 
-export class CreateCategoryUseCase
-  implements DefaultUseCase<CreateCategoryInput, Promise<Output>>
-{
+export class CreateCategoryUseCase implements DefaultUseCase<
+  CreateCategoryInput,
+  Promise<Output>
+> {
   constructor(private categoryRepository: CategoryRepository) {}
   async execute(input: CreateCategoryInput): Promise<Output> {
     if (!input.name) throw new BadRequestError('Input data not provided')

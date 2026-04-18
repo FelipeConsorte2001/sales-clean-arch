@@ -11,9 +11,10 @@ export type SigninInput = {
 }
 export type Output = UserOutput
 
-export class SigninUseCase
-  implements DefaultUseCase<SigninInput, Promise<Output>>
-{
+export class SigninUseCase implements DefaultUseCase<
+  SigninInput,
+  Promise<Output>
+> {
   constructor(
     private userRepository: UserRepository,
     private hashProviderProvider: HashProvider,
