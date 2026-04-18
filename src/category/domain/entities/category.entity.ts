@@ -13,6 +13,7 @@ export class CategoryEntity extends Entity<CategoryProps> {
     public readonly props: CategoryProps,
     id?: string,
   ) {
+    props.name = props.name?.trim().toLocaleLowerCase()
     CategoryEntity.validate(props)
     super(props, id)
     this.props.createdAt = this.props.createdAt ?? new Date()
