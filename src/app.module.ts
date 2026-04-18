@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common'
 import { AuthModule } from './auth/infrastructure/auth.module'
 import { CategoryModule } from './category/category.module'
-import { CategoryService } from './category/infrastructure/category.service'
 import { DatabaseModule } from './shared/infrastructure/database/database.module'
 import { EnvConfigModule } from './shared/infrastructure/env-config/env-config.module'
 import { UsersModule } from './users/infrastructure/users.module'
@@ -15,6 +14,6 @@ import { UsersModule } from './users/infrastructure/users.module'
     CategoryModule,
   ],
   controllers: [],
-  providers: [CategoryService],
+  providers: [],
 })
 export class AppModule {}
