@@ -3,11 +3,11 @@ import { DatabaseModule } from '@/shared/infrastructure/database/database.module
 import { setupPrismaTests } from '@/shared/infrastructure/database/prisma/testing/setup-prisma/setup-prisma-tests'
 import { Test, TestingModule } from '@nestjs/testing'
 import { PrismaClient } from '@prisma/client'
-import { CreateCategoryUseCase } from '../../create.usecase'
+import { CreateUseCase } from '../../create.usecase'
 
 describe('CreateUseCase integration tests', () => {
   const prismaService = new PrismaClient()
-  let sut: CreateCategoryUseCase
+  let sut: CreateUseCase
   let repository: CategoryPrismaRepository
 
   let module: TestingModule
@@ -21,7 +21,7 @@ describe('CreateUseCase integration tests', () => {
   })
 
   beforeEach(async () => {
-    sut = new CreateCategoryUseCase(repository)
+    sut = new CreateUseCase(repository)
     await prismaService.category.deleteMany()
   })
 

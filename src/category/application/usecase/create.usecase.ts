@@ -9,7 +9,7 @@ export type CreateCategoryInput = {
 }
 export type Output = CategoryOutput
 
-export class CreateCategoryUseCase implements DefaultUseCase<
+export class CreateUseCase implements DefaultUseCase<
   CreateCategoryInput,
   Promise<Output>
 > {

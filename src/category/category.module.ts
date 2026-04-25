@@ -3,7 +3,7 @@ import { CategoryRepository } from '@/category/domain/repositories/category.repo
 import { PrismaService } from '@/shared/infrastructure/database/prisma/prisma.service'
 import { bcryptjsHashProvider } from '@/users/infrastructure/providers/bcryptjs-hash.provider'
 import { Module } from '@nestjs/common'
-import { CreateCategoryUseCase } from './application/usecase/create.usecase'
+import { CreateUseCase } from './application/usecase/create.usecase'
 import { CategoryController } from './infrastructure/category.controller'
 import { CategoryPrismaRepository } from './infrastructure/database/prisma/repositories/category-prisma.repository'
 
@@ -27,9 +27,9 @@ import { CategoryPrismaRepository } from './infrastructure/database/prisma/repos
       useClass: bcryptjsHashProvider,
     },
     {
-      provide: CreateCategoryUseCase,
+      provide: CreateUseCase,
       useFactory: (categoryRepository: CategoryRepository) => {
-        return new CreateCategoryUseCase(categoryRepository)
+        return new CreateUseCase(categoryRepository)
       },
       inject: ['CategoryRepository'],
     },

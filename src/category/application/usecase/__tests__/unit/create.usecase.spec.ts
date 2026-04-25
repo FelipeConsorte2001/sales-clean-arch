@@ -2,7 +2,7 @@ import { CategoryRepository } from '@/category/domain/repositories/category.repo
 import { CategoryDataBuilder } from '@/category/domain/testing/helpers/category-data-builder'
 import { BadRequestError } from '@/shared/application/erros/bad-request-error'
 import { ConflictError } from '@/shared/domain/erros/conflict-error'
-import { CreateCategoryUseCase } from '../../create.usecase'
+import { CreateUseCase } from '../../create.usecase'
 
 const MockCategoryRepository = {
   execute: jest.fn(),
@@ -10,12 +10,12 @@ const MockCategoryRepository = {
   categoryExist: jest.fn(),
 } as any as CategoryRepository
 describe('Category unit tests', () => {
-  let sut: CreateCategoryUseCase
+  let sut: CreateUseCase
   let repository: typeof MockCategoryRepository
 
   beforeEach(() => {
     repository = MockCategoryRepository
-    sut = new CreateCategoryUseCase(repository)
+    sut = new CreateUseCase(repository)
     jest.clearAllMocks()
   })
 

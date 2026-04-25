@@ -30,7 +30,7 @@ describe('CategoryController unit tests', () => {
       execute: jest.fn().mockResolvedValue(Promise.resolve(output)),
     }
 
-    sut['createCategoryUseCase'] = mockCreateUseCase as any
+    sut['CreateUseCase'] = mockCreateUseCase as any
     const input: CreateCategoryDto = {
       name: 'name',
     }
