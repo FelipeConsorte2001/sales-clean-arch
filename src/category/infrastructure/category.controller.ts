@@ -1,7 +1,16 @@
-import { Body, Controller, HttpCode, Inject, Post } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Inject,
+  Param,
+  Post,
+} from '@nestjs/common'
 import { ApiResponse, ApiTags } from '@nestjs/swagger'
 import { CategoryOutput } from '../application/dtos/category-output'
 import { CreateUseCase } from '../application/usecase/create.usecase'
+import { GetCategoryUseCase } from '../application/usecase/get-category.usecase'
 import { CreateCategoryDto } from './dtos/createCategory.dto'
 import { CategoryPresenter } from './presenters/category.presenter'
 
@@ -10,6 +19,9 @@ import { CategoryPresenter } from './presenters/category.presenter'
 export class CategoryController {
   @Inject(CreateUseCase)
   private CreateUseCase: CreateUseCase
+
+  @Inject(GetCategoryUseCase)
+  private GetCategoryUseCase: GetCategoryUseCase
 
   static categoryToResponse(output: CategoryOutput) {
     return new CategoryPresenter(output)
@@ -22,6 +34,21 @@ export class CategoryController {
   @Post('')
   async createCategory(@Body() createCategoryDto: CreateCategoryDto) {
     const output = await this.CreateUseCase.execute(createCategoryDto)
+    return CategoryController.categoryToResponse(output)
+  }
+
+  @ApiResponse({
+    status: 404,
+    description: 'id did not find',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'access unathorizathe',
+  })
+  @HttpCode(200)
+  @Get(':id')
+  async findOne(@Param('id') id: string) {
+    const output = await this.GetCategoryUseCase.execute({ id })
     return CategoryController.categoryToResponse(output)
   }
 }

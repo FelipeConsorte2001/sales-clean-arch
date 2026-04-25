@@ -14,7 +14,7 @@ import request from 'supertest'
 import { CategoryController } from '../../category.controller'
 import { CreateCategoryDto } from '../../dtos/createCategory.dto'
 
-describe('CategoryController e2e tests', () => {
+describe('Category create e2e tests', () => {
   let app: INestApplication
   let module: TestingModule
   let repository: CategoryRepository
