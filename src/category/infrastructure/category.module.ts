@@ -3,10 +3,11 @@ import { CategoryRepository } from '@/category/domain/repositories/category.repo
 import { PrismaService } from '@/shared/infrastructure/database/prisma/prisma.service'
 import { bcryptjsHashProvider } from '@/users/infrastructure/providers/bcryptjs-hash.provider'
 import { Module } from '@nestjs/common'
-import { CreateUseCase } from './application/usecase/create.usecase'
-import { GetCategoryUseCase } from './application/usecase/get-category.usecase'
-import { CategoryController } from './infrastructure/category.controller'
-import { CategoryPrismaRepository } from './infrastructure/database/prisma/repositories/category-prisma.repository'
+import { CreateUseCase } from '../application/usecase/create.usecase'
+import { GetCategoryUseCase } from '../application/usecase/get-category.usecase'
+import { ListCategoryUseCase } from '../application/usecase/list-category.usecase'
+import { CategoryController } from './category.controller'
+import { CategoryPrismaRepository } from './database/prisma/repositories/category-prisma.repository'
 
 @Module({
   imports: [AuthModule],
@@ -38,6 +39,20 @@ import { CategoryPrismaRepository } from './infrastructure/database/prisma/repos
       provide: GetCategoryUseCase,
       useFactory: (categoryRepository: CategoryRepository) => {
         return new GetCategoryUseCase(categoryRepository)
+      },
+      inject: ['CategoryRepository'],
+    },
+    {
+      provide: GetCategoryUseCase,
+      useFactory: (categoryRepository: CategoryRepository) => {
+        return new GetCategoryUseCase(categoryRepository)
+      },
+      inject: ['CategoryRepository'],
+    },
+    {
+      provide: ListCategoryUseCase,
+      useFactory: (categoryRepository: CategoryRepository) => {
+        return new ListCategoryUseCase(categoryRepository)
       },
       inject: ['CategoryRepository'],
     },

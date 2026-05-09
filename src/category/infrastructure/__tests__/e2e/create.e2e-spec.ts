@@ -1,4 +1,3 @@
-import { CategoryModule } from '@/category/category.module'
 import { CategoryEntity } from '@/category/domain/entities/category.entity'
 import { CategoryRepository } from '@/category/domain/repositories/category.repository'
 import { CategoryDataBuilder } from '@/category/domain/testing/helpers/category-data-builder'
@@ -12,6 +11,7 @@ import { PrismaClient } from '@prisma/client'
 import { instanceToPlain } from 'class-transformer'
 import request from 'supertest'
 import { CategoryController } from '../../category.controller'
+import { CategoryModule } from '../../category.module'
 import { CreateCategoryDto } from '../../dtos/createCategory.dto'
 
 describe('Category create e2e tests', () => {

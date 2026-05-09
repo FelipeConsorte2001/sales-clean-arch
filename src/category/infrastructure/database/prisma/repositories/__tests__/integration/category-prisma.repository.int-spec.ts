@@ -1,4 +1,8 @@
 import { CategoryEntity } from '@/category/domain/entities/category.entity'
+import {
+  SearchParams,
+  SearchResults,
+} from '@/category/domain/repositories/category.repository'
 import { CategoryDataBuilder } from '@/category/domain/testing/helpers/category-data-builder'
 import { ConflictError } from '@/shared/domain/erros/conflict-error'
 import { NotFoundError } from '@/shared/domain/erros/not-found-error'
@@ -63,7 +67,67 @@ describe('CategoryPrismaRepository integration tests', () => {
   it('should throws error when entity not found', async () => {
     const fakeId = 'fakeId'
     await expect(() => sut.findById(fakeId)).rejects.toThrow(
-      new NotFoundError(`UserModel not found using ID ${fakeId}`),
+      new NotFoundError(`CategoryModel not found using ID ${fakeId}`),
     )
+  })
+
+  describe('search method test', () => {
+    it('should apply only pagination when the other params are null', async () => {
+      const createAt = new Date()
+      const entities: CategoryEntity[] = []
+      const arrage = Array(16).fill(CategoryDataBuilder({}))
+      arrage.forEach((element, index) => {
+        entities.push(
+          new CategoryEntity({
+            ...element,
+            createdAt: new Date(createAt.getTime() + index),
+          }),
+        )
+      })
+      await prismaService.category.createMany({
+        data: entities.map(item => item.toJSON()),
+      })
+
+      const searchOutput = await sut.search(new SearchParams())
+
+      expect(searchOutput).toBeInstanceOf(SearchResults)
+      expect(searchOutput.total).toBe(16)
+      expect(searchOutput.items.length).toBe(15)
+      expect(
+        searchOutput.items.forEach(item =>
+          expect(item).toBeInstanceOf(CategoryEntity),
+        ),
+      )
+    })
+    it('should search using filter, sort and paginate', async () => {
+      const createAt = new Date()
+      const entities: CategoryEntity[] = []
+      const arrage = ['test', 'a', 'b']
+
+      arrage.forEach((element, index) => {
+        entities.push(
+          new CategoryEntity({
+            ...CategoryDataBuilder({ name: element }),
+            createdAt: new Date(createAt.getTime() + index),
+          }),
+        )
+      })
+      await prismaService.category.createMany({
+        data: entities.map(item => item.toJSON()),
+      })
+
+      const searchOutputPage1 = await sut.search(
+        new SearchParams({
+          page: 1,
+          perPage: 2,
+          sort: 'name',
+          sortDir: 'asc',
+          filter: 'test',
+        }),
+      )
+      expect(searchOutputPage1.items[0].toJSON()).toMatchObject(
+        entities[0].toJSON(),
+      )
+    })
   })
 })

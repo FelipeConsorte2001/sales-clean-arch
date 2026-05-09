@@ -42,7 +42,7 @@ describe('GetUseCase integraion tests', () => {
   it('should show throws error when entity notFound', async () => {
     const id = 'id'
     await expect(() => sut.execute({ id })).rejects.toThrow(
-      new NotFoundError(`UserModel not found using ID ${id}`),
+      new NotFoundError(`CategoryModel not found using ID ${id}`),
     )
   })
 })

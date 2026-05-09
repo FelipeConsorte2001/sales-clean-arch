@@ -14,12 +14,11 @@ import { CategoryController } from '../../category.controller'
 import { CategoryModule } from '../../category.module'
 
 describe('CategoryController e2e tests', () => {
-  let app: INestApplication
   let module: TestingModule
+  let app: INestApplication
   let repository: CategoryRepository
-  const prismaService = new PrismaClient()
   let entity: CategoryEntity
-
+  const prismaService = new PrismaClient()
   beforeAll(async () => {
     setupPrismaTests()
     module = await Test.createTestingModule({
@@ -33,36 +32,53 @@ describe('CategoryController e2e tests', () => {
     applyGlobalConfig(app)
     await app.init()
     repository = module.get<CategoryRepository>('CategoryRepository')
+    repository = module.get<CategoryRepository>('CategoryRepository')
   })
 
   beforeEach(async () => {
+    await prismaService.category.deleteMany()
     entity = new CategoryEntity(CategoryDataBuilder({}))
     await repository.insert(entity)
   })
-  afterAll(async () => {
-    await prismaService.category.deleteMany()
-  })
+  describe('GET /users', () => {
+    it('should should return the users ordered by createdAt', async () => {
+      const createdAt = new Date()
+      const entities: CategoryEntity[] = []
+      const arrange = Array(3).fill(CategoryDataBuilder({}))
+      arrange.forEach((element, index) => {
+        entities.push(
+          new CategoryEntity({
+            ...element,
+            createdAt: new Date(createdAt.getTime() + index),
+          }),
+        )
+      })
+      await prismaService.category.deleteMany()
+      await prismaService.category.createMany({
+        data: entities.map(item => item.toJSON()),
+      })
+      const serachParams = {}
+      const queryParams = new URLSearchParams(serachParams).toString()
 
-  describe('GET /category/:id', () => {
-    it('Should get a category by id', async () => {
       const res = await request(app.getHttpServer())
-        .get(`/category/${entity._id}`)
+        .get(`/category?${queryParams}`)
         .expect(200)
-
-      const presenter = CategoryController.categoryToResponse(entity.toJSON())
-      const serialized = instanceToPlain(presenter)
-      expect(res.body.data).toStrictEqual(serialized)
+      expect(Object.keys(res.body)).toStrictEqual(['data', 'meta'])
+      expect(res.body).toStrictEqual({
+        data: [...entities]
+          .reverse()
+          .map(item =>
+            instanceToPlain(CategoryController.categoryToResponse(item)),
+          ),
+        meta: { total: 3, currentPage: 1, perPage: 15, lastPage: 1 },
+      })
     })
-
-    it('should return a error with 404 code when throw notFoundError with invalid id', async () => {
-      await request(app.getHttpServer())
-        .get(`/category/fake`)
-        .expect(404)
-        .expect({
-          statusCode: 404,
-          error: 'Not Found',
-          message: 'CategoryModel not found using ID fake',
-        })
+    it('should return a error with 422 code when query params is invalid', async () => {
+      const res = await request(app.getHttpServer())
+        .get(`/category?fake=10`)
+        .expect(422)
+      expect(res.body.error).toBe('Unprocessable Entity')
+      expect(res.body.message).toEqual(['property fake should not exist'])
     })
   })
 })
