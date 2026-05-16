@@ -1,3 +1,4 @@
+import { CategoryModule } from '@/category/category.module'
 import { CategoryEntity } from '@/category/domain/entities/category.entity'
 import { CategoryRepository } from '@/category/domain/repositories/category.repository'
 import { CategoryDataBuilder } from '@/category/domain/testing/helpers/category-data-builder'
@@ -9,7 +10,6 @@ import { INestApplication } from '@nestjs/common'
 import { Test, TestingModule } from '@nestjs/testing'
 import { PrismaClient } from '@prisma/client'
 import request from 'supertest'
-import { CategoryModule } from '../../category.module'
 
 describe('Category delete e2e tests', () => {
   let app: INestApplication
