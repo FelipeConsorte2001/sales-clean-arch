@@ -56,6 +56,15 @@ describe('CategoryPrismaRepository integration tests', () => {
     await sut.categoryExist('aa'.toLocaleLowerCase())
   })
 
+  it('should retuns all users', async () => {
+    const entity = new CategoryEntity(CategoryDataBuilder({}))
+    await prismaService.category.create({ data: entity.toJSON() })
+    const entities = await sut.findAll()
+    expect(entities).toHaveLength(1)
+    expect(JSON.stringify(entities)).toBe(JSON.stringify([entity]))
+    entities.map(item => expect(item.toJSON()).toStrictEqual(entity.toJSON()))
+  })
+
   it('should finds a entity by id', async () => {
     const entity = new CategoryEntity(CategoryDataBuilder({}))
     const newCategory = await prismaService.category.create({
@@ -68,6 +77,23 @@ describe('CategoryPrismaRepository integration tests', () => {
     const fakeId = 'fakeId'
     await expect(() => sut.findById(fakeId)).rejects.toThrow(
       new NotFoundError(`CategoryModel not found using ID ${fakeId}`),
+    )
+  })
+
+  it('Should delete a entity', async () => {
+    const entity = new CategoryEntity(CategoryDataBuilder({}))
+    await prismaService.category.create({ data: entity.toJSON() })
+    await sut.delete(entity._id)
+    const output = await prismaService.category.findUnique({
+      where: { id: entity._id },
+    })
+    expect(output).toBeNull()
+  })
+
+  it('should throws error on delete when a entity not found', async () => {
+    const entity = new CategoryEntity(CategoryDataBuilder({}))
+    await expect(() => sut.delete(entity.id)).rejects.toThrow(
+      new NotFoundError(`CategoryModel not found using ID ${entity._id}`),
     )
   })
 

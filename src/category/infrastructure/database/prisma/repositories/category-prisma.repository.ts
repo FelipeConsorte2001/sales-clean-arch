@@ -66,14 +66,16 @@ export class CategoryPrismaRepository implements CategoryRepository {
   async findById(id: string): Promise<CategoryEntity> {
     return this._get(id)
   }
-  findAll(): Promise<CategoryEntity[]> {
-    throw new Error('Method not implemented.')
+  async findAll(): Promise<CategoryEntity[]> {
+    const models = await this.prismaService.category.findMany()
+    return models.map(model => CategoryModelMapper.toEntity(model))
   }
   update(entity: CategoryEntity): Promise<void> {
     throw new Error('Method not implemented.')
   }
-  delete(id: string): Promise<void> {
-    throw new Error('Method not implemented.')
+  async delete(id: string): Promise<void> {
+    await this._get(id)
+    await this.prismaService.category.delete({ where: { id } })
   }
   protected async _get(id: string): Promise<CategoryEntity> {
     try {

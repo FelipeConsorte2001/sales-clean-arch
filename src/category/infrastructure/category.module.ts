@@ -4,6 +4,7 @@ import { PrismaService } from '@/shared/infrastructure/database/prisma/prisma.se
 import { bcryptjsHashProvider } from '@/users/infrastructure/providers/bcryptjs-hash.provider'
 import { Module } from '@nestjs/common'
 import { CreateUseCase } from '../application/usecase/create.usecase'
+import { DeleteCategoryUseCase } from '../application/usecase/deleted.usecase'
 import { GetCategoryUseCase } from '../application/usecase/get-category.usecase'
 import { ListCategoryUseCase } from '../application/usecase/list-category.usecase'
 import { CategoryController } from './category.controller'
@@ -53,6 +54,13 @@ import { CategoryPrismaRepository } from './database/prisma/repositories/categor
       provide: ListCategoryUseCase,
       useFactory: (categoryRepository: CategoryRepository) => {
         return new ListCategoryUseCase(categoryRepository)
+      },
+      inject: ['CategoryRepository'],
+    },
+    {
+      provide: DeleteCategoryUseCase,
+      useFactory: (categoryRepository: CategoryRepository) => {
+        return new DeleteCategoryUseCase(categoryRepository)
       },
       inject: ['CategoryRepository'],
     },

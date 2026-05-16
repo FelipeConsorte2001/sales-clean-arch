@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   Inject,
@@ -11,6 +12,7 @@ import {
 import { ApiResponse, ApiTags } from '@nestjs/swagger'
 import { CategoryOutput } from '../application/dtos/category-output'
 import { CreateUseCase } from '../application/usecase/create.usecase'
+import { DeleteCategoryUseCase } from '../application/usecase/deleted.usecase'
 import { GetCategoryUseCase } from '../application/usecase/get-category.usecase'
 import {
   ListCategoryUseCase,
@@ -34,6 +36,9 @@ export class CategoryController {
 
   @Inject(ListCategoryUseCase)
   private ListCategoryUseCase: ListCategoryUseCase
+
+  @Inject(DeleteCategoryUseCase)
+  private DeleteCategoryUseCase: DeleteCategoryUseCase
 
   static categoryToResponse(output: CategoryOutput) {
     return new CategoryPresenter(output)
@@ -82,5 +87,23 @@ export class CategoryController {
   async find(@Query() searchParams: ListCategoriesDto) {
     const output = await this.ListCategoryUseCase.execute(searchParams)
     return CategoryController.listCategoriesToResponse(output)
+  }
+
+  @ApiResponse({
+    status: 204,
+    description: 'exclusion confirmation response',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'id did not find',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'access unathorizathe',
+  })
+  @HttpCode(204)
+  @Delete(':id')
+  async remove(@Param('id') id: string) {
+    await this.DeleteCategoryUseCase.execute({ id })
   }
 }
